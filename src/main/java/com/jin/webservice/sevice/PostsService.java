@@ -1,19 +1,35 @@
 package com.jin.webservice.sevice;
 
 import com.jin.webservice.domain.posts.PostsRepository;
+import com.jin.webservice.dto.posts.PostsMainResponseDto;
 import com.jin.webservice.dto.posts.PostsSaveRequestDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Created by jojoldu@gmail.com on 2017. 12. 27.
+ * Blog : http://jojoldu.tistory.com
+ * Github : https://github.com/jojoldu
+ */
 
 @AllArgsConstructor
 @Service
 public class PostsService {
     private PostsRepository postsRepository;
 
-    @Transactional//메소드 내에서 Exception이 발생하면 해당 메소드에서 이루어진 모든 작업을 초기화 시킴
-    public Long save(PostsSaveRequestDto dto){
+    @Transactional
+    public Long save(PostsSaveRequestDto dto) {
         return postsRepository.save(dto.toEntity()).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostsMainResponseDto> findAllDesc() {
+        return postsRepository.findAllDesc()
+                .map(PostsMainResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
